@@ -1,0 +1,33 @@
+-- dropping tables if exists
+drop table episodeIV;
+drop table episodes;
+
+-- Making table for the input files
+create table episodes (names string, line string)
+row format delimited fields terminated by '\t'
+tblproperties ("skip.header.line.count"="2");
+
+-- load the episode files
+load data local inpath '/root/inputs/episodeIV_dialouges.txt' into table episodes;
+load data local inpath '/root/inputs/episodeV_dialouges.txt' into table episodes;
+load data local inpath '/root/inputs/episodeVI_dialouges.txt' into table episodes;
+
+-- Activity 2.1
+
+insert overwrite directory '/user/vandana/HiveProjectOutput'
+select names, count(names) as no_of_lines from episodes group by names order by no_of_lines desc;
+
+
+-- Actvity 2.2
+-- Input table
+
+create table episodeIV (names string, line string)
+row format delimited fields terminated by '\t'
+tblproperties ("skip.header.line.count"="2");
+
+-- load data into table
+load data local inpath '/root/inputs/episodeIV_dialouges.txt' into table episodeIV;
+
+-- query to count lines
+
+select count(*) from episodeIV where instr(line, 'Luke')>= 1;
